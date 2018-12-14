@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">SimulatorMQTTSAVIA</string>
+
+    <string-array name="spinnerUsuarios">
+        <item>30</item>
+        <item>60</item>
+        <item>90</item>
+        <item>120</item>
+        <item>150</item>
+    </string-array>
+
+
+    <string-array name="spinnerNTest">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+        <item>10</item>
+    </string-array>
+
+</resources>
