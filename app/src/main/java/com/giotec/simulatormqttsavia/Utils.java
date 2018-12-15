@@ -1,5 +1,6 @@
 package com.giotec.simulatormqttsavia;
 
+import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 
@@ -15,14 +16,14 @@ import java.util.ArrayList;
 
 public class Utils {
     private final static String TAG = "GIODEBUG_UTILS";
+    private final static String ip = "192.168.0.102";
+    private final static String userMQTT = "Raspberry";
+    private final static String passMQTT = "yrrebpsaR";
 
-    public static ArrayList<MensajePublicar> readAllJSONS(){
+    public static ArrayList<MensajePublicar> readAllJSONS(Context ctx){
         ArrayList<MensajePublicar> mensajes = new ArrayList<>();;
         Log.d(TAG,"Leyendo AllData");
-        JSONArray jsonsArray = new JSONArray();
-        //Read From Internal
         String root = Environment.getExternalStorageDirectory().toString();
-        //File myDir = new File(root + "/Savia");
 
         File file = new File(root + "/Savia","Alldata.txt");
         try {
@@ -39,7 +40,8 @@ public class Utils {
                                     json.getString("ses_id"),
                                     json.getString("mac"),
                                     json.getString("relation"),
-                                    json.getString("type")
+                                    json.getString("type"),
+                                    ctx
                             ));
                 } catch (JSONException e) {
                     Log.d(TAG,"Cant: "+mensajes.size()+" JSONException "+e.toString());
@@ -55,4 +57,18 @@ public class Utils {
         }
         return mensajes;
     }
+
+    public static String getIp() {
+        return ip;
+    }
+
+    public static String getUserMQTT() {
+        return userMQTT;
+    }
+
+    public static String getPassMQTT() {
+        return passMQTT;
+    }
+
+
 }
