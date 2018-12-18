@@ -30,6 +30,7 @@ public class MensajePublicar {
     String date_simulator;
     private Context ctx;
     MqttAndroidClient mqttAndroidClient;
+    private boolean msggSent;
 
     public MensajePublicar(String imei, String imsi, String ses_id, String mac, String relation, String type,Context ctx) {
         this.imei = imei;
@@ -39,6 +40,7 @@ public class MensajePublicar {
         this.relation = relation;
         this.type = type;
         this.ctx = ctx;
+        msggSent=false;
         //CreoClienteMQTT();
     }
 
@@ -60,45 +62,65 @@ public class MensajePublicar {
         options.setPassword(Utils.getPassMQTT().toCharArray());
         options.setCleanSession(false);
 
-        options.setAutomaticReconnect(true);
-        //options.setKeepAliveInterval(20000);
+        options.setAutomaticReconnect(false);
+        options.setKeepAliveInterval(30);
         try {
             IMqttToken token = mqttAndroidClient.connect(options);
             token.setActionCallback(new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
+                    MqttMessage message = new MqttMessage(getStringJson().getBytes());
                     try {
-                        JSONObject jsonObject = new JSONObject();
-                        jsonObject.put("imei",imei);
-                        jsonObject.put("imsi",imsi);
-                        jsonObject.put("ses_id",ses_id);
-                        jsonObject.put("mac",mac);
-                        jsonObject.put("longitude",longitude);
-                        jsonObject.put("latitude",latitude);
-                        jsonObject.put("date_simulator",date_simulator);
-                        MqttMessage message = new MqttMessage(jsonObject.toString().getBytes());
-                        try {
-                            //Log.d(TAG,"Enviando "+jsonObject.toString());
-                            mqttAndroidClient.publish(relation+"/"+type,message);
-                            mqttAndroidClient.disconnect();
-                        } catch (MqttException e) {
-                            Log.d("GIODEBUG_MQTT_SA", ses_id+" MqttException" + asyncActionToken.toString());
-                            e.printStackTrace();
-                        }
-                    } catch (JSONException e) {
-                        Log.d("GIODEBUG_MQTT_SA", ses_id+" JSONException" + asyncActionToken.toString());
+                        //Log.d(TAG,"Enviando "+getStringJson());
+                        mqttAndroidClient.publish(relation+"/"+type,message);
+                        mqttAndroidClient.disconnect();
+                        setMsggSent(true);
+                    } catch (MqttException e) {
+                        Log.d("GIODEBUG_MQTT_SA", ses_id+"__"+relation+" MqttException" + asyncActionToken.toString());
                         e.printStackTrace();
                     }
-
                 }
                 @Override
                 public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
-                    Log.d("GIODEBUG_MQTT_SA", ses_id+" IMqttActionListener_onFailure_" + asyncActionToken.toString());
+                    Log.d("GIODEBUG_MQTT_SA", ses_id+"__"+relation+" IMqttActionListener_onFailure_" + asyncActionToken.toString());
                 }
 
             });
         } catch (MqttException e) {
             e.printStackTrace();
         }
+    }
+
+    public String getStringJson(){
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("imei",imei);
+            jsonObject.put("imsi",imsi);
+            jsonObject.put("ses_id",ses_id);
+            jsonObject.put("mac",mac);
+            jsonObject.put("longitude",longitude);
+            jsonObject.put("latitude",latitude);
+            jsonObject.put("date_simulator",date_simulator);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonObject.toString();
+    }
+
+    public Context getCtx() {
+        return ctx;
+    }
+
+    public String getTopic(){
+        return  relation+"/"+type;
+    }
+
+
+    public boolean isMsggSent() {
+        return msggSent;
+    }
+
+    public void setMsggSent(boolean msggSent) {
+        this.msggSent = msggSent;
     }
 }

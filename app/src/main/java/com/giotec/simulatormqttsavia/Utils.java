@@ -16,7 +16,8 @@ import java.util.ArrayList;
 
 public class Utils {
     private final static String TAG = "GIODEBUG_UTILS";
-    private final static String ip = "192.168.0.102";
+    //private final static String ip = "192.168.52.232";
+    private final static String ip = "190.119.192.232";
     private final static String userMQTT = "Raspberry";
     private final static String passMQTT = "yrrebpsaR";
 

@@ -2,11 +2,9 @@
     <string name="app_name">SimulatorMQTTSAVIA</string>
 
     <string-array name="spinnerUsuarios">
-        <item>30</item>
-        <item>60</item>
-        <item>90</item>
-        <item>120</item>
-        <item>150</item>
+        <item>3G</item>
+        <item>4G</item>
+        <item>WIFI</item>
     </string-array>
 
 
