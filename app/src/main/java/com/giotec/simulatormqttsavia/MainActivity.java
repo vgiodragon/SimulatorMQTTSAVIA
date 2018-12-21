@@ -250,10 +250,10 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            Log.d(TAG,"Espero 9.9s que acabe de enviar toda la tanda "+tanda);
+            Log.d(TAG,"Espero 9.8s que acabe de enviar toda la tanda "+tanda);
 
             try {
-                Thread.sleep(9900);
+                Thread.sleep(9800);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -282,23 +282,23 @@ public class MainActivity extends AppCompatActivity {
         protected Void doInBackground(Void... voids) {
             Log.d(TAG,"Send Triple "+grupo);
 
-            double latitude = -12.111111f +0.005f*tanda;
-            double[] longitudes = new double[]{-76.940022f, -76.951022f, -76.944022f};
+            float latitude = -12.111111f +0.005f*tanda;
+            float[] longitudes = new float[]{-76.940022f, -76.951022f, -76.944022f};
             MensajePublicar jsonsArray3_2 = mensajes.get(grupo*3+2);
             MensajePublicar jsonsArray3_1 = mensajes.get(grupo*3+1);
             MensajePublicar jsonsArray3 = mensajes.get(grupo*3);
 
+            jsonsArray3_2.setLongi_Lati_DateSimulator(longitudes[2]-0.002f*(tanda%2),
+                    latitude, new SimpleDateFormat("HH:mm:ss.SS").format(new Date()));
+            jsonsArray3_2.Publicar();
+
             jsonsArray3_1.setLongi_Lati_DateSimulator(longitudes[1]+0.002f*(tanda%2),
                     latitude, new SimpleDateFormat("HH:mm:ss.SS").format(new Date()));
-            jsonsArray3_1.CreoClienteMQTTyPublico();
+            jsonsArray3_1.Publicar();
 
             jsonsArray3.setLongi_Lati_DateSimulator(longitudes[0]-0.002f*(tanda%2),
                     latitude, new SimpleDateFormat("HH:mm:ss.SS").format(new Date()));
-            jsonsArray3.CreoClienteMQTTyPublico();
-
-            jsonsArray3_2.setLongi_Lati_DateSimulator(longitudes[2]-0.002f*(tanda%2),
-                    latitude, new SimpleDateFormat("HH:mm:ss.SS").format(new Date()));
-            jsonsArray3_2.CreoClienteMQTTyPublico();
+            jsonsArray3.Publicar();
             //try {
           //      Thread.sleep(15000);
           //  } catch (InterruptedException e) {

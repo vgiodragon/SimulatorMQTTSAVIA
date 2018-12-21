@@ -30,7 +30,8 @@ public class Utils {
         try {
             BufferedReader br = new BufferedReader(new FileReader(file));
             String line;
-            while ((line = br.readLine()) != null) {
+            int leidos =0;
+            while ((line = br.readLine()) != null && leidos <35) {
 
                 try {
                     JSONObject json = new JSONObject(line);
@@ -44,6 +45,7 @@ public class Utils {
                                     json.getString("type"),
                                     ctx
                             ));
+                    leidos++;
                 } catch (JSONException e) {
                     Log.d(TAG,"Cant: "+mensajes.size()+" JSONException "+e.toString());
                     e.printStackTrace();

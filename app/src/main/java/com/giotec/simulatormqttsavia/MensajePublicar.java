@@ -25,11 +25,11 @@ public class MensajePublicar {
     String mac;
     String relation;
     String type;
-    Double longitude;
-    Double latitude;
+    float longitude;
+    float latitude;
     String date_simulator;
     private Context ctx;
-    MqttAndroidClient mqttAndroidClient;
+    private MqttAndroidClient mqttAndroidClient;
     private boolean msggSent;
 
     public MensajePublicar(String imei, String imsi, String ses_id, String mac, String relation, String type,Context ctx) {
@@ -41,13 +41,56 @@ public class MensajePublicar {
         this.type = type;
         this.ctx = ctx;
         msggSent=false;
-        //CreoClienteMQTT();
+        CreoClienteMQTT();
     }
 
-    public void setLongi_Lati_DateSimulator(Double longitude,Double latitude,String date_simulator){
+    public void setLongi_Lati_DateSimulator(float longitude,float latitude,String date_simulator){
         this.longitude = longitude;
         this.latitude = latitude;
         this.date_simulator = date_simulator;
+    }
+
+    public void CreoClienteMQTT(){
+        int random= (int) (Math.random()*12345);
+        mqttAndroidClient
+                = new MqttAndroidClient(ctx, "tcp://"+
+                Utils.getIp()+":1883", ses_id+" "+random);
+
+        MqttConnectOptions options = new MqttConnectOptions();
+        options.setMqttVersion(MqttConnectOptions.MQTT_VERSION_3_1_1);
+        options.setUserName(Utils.getUserMQTT());
+        options.setPassword(Utils.getPassMQTT().toCharArray());
+        options.setCleanSession(false);
+
+        options.setAutomaticReconnect(false);
+        options.setKeepAliveInterval(30);
+        try {
+            IMqttToken token = mqttAndroidClient.connect(options);
+            token.setActionCallback(new IMqttActionListener() {
+                @Override
+                public void onSuccess(IMqttToken asyncActionToken) {
+                    Log.d("GIODEBUG_MQTT_SA", ses_id+"__"+relation+" CONECTADO!" + asyncActionToken.toString());
+                }
+                @Override
+                public void onFailure(IMqttToken asyncActionToken, Throwable exception) {
+                    Log.d("GIODEBUG_MQTT_SA", ses_id+"__"+relation+" IMqttActionListener_onFailure_" + asyncActionToken.toString());
+                }
+
+            });
+        } catch (MqttException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void Publicar(){
+        try {
+            //Log.d(TAG,"Enviando "+getStringJson());
+            MqttMessage message = new MqttMessage(getStringJson().getBytes());
+            mqttAndroidClient.publish(relation+"/"+type,message);
+        } catch (MqttException e) {
+            Log.d("GIODEBUG_MQTT_SA", ses_id+"__"+relation+" MqttException pa publicar");
+            e.printStackTrace();
+        }
     }
 
     public void CreoClienteMQTTyPublico(){
@@ -69,6 +112,7 @@ public class MensajePublicar {
             token.setActionCallback(new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
+
                     MqttMessage message = new MqttMessage(getStringJson().getBytes());
                     try {
                         //Log.d(TAG,"Enviando "+getStringJson());
